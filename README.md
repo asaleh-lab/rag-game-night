@@ -30,3 +30,9 @@ python src/multi_query.py
 ```powershell
 python src/self_query.py
 ```
+
+## Let's embed small chunks and return the parent sheet
+
+```powershell
+python src/parent_document.py
+```

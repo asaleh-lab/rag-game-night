@@ -1,5 +1,6 @@
 langchain==0.3.27
 langchain-openai==0.3.34
+langchain-text-splitters==0.3.11
 lark==1.2.2
 openai==2.54.0
 python-dotenv==1.2.3
