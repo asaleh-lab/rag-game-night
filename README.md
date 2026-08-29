@@ -54,3 +54,13 @@ python src/faiss_search.py
 ```powershell
 python src/chroma_and_faiss.py
 ```
+
+Same binder, same question. Only the store changes (Chroma then FAISS). You should see Patchwork first. Distances can match. The titles should not change.
+
+## Serve it with Gradio
+
+```powershell
+python src/app.py
+```
+
+Open the local URL Gradio prints.
