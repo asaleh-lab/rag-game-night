@@ -48,3 +48,9 @@ python src/llamaindex_retrievers.py
 ```powershell
 python src/faiss_search.py
 ```
+
+## Let's keep the same embeddings in Chroma and FAISS
+
+```powershell
+python src/chroma_and_faiss.py
+```
