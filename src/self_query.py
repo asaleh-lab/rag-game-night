@@ -1,96 +1,16 @@
 """LLM splits the question into meaning plus a metadata filter."""
 
-import json
-from operator import eq, ge, gt, le, lt, ne
-from pathlib import Path
-
 from dotenv import load_dotenv
 from langchain.chains.query_constructor.schema import AttributeInfo
 from langchain.retrievers.self_query.base import SelfQueryRetriever
-from langchain_core.documents import Document
-from langchain_core.structured_query import (
-    Comparator,
-    Comparison,
-    Operation,
-    Operator,
-    StructuredQuery,
-    Visitor,
-)
-from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+
+from binder import QUERY, GameStore, MemoryTranslator, binder_docs
 
 load_dotenv()  # OPENAI_API_KEY from .env
 
-# Same binder and question as vector_retriever.py. Only the retriever changes.
-QUERY = "a short calm game for two people after work"
-games = json.loads(Path("data/games.json").read_text(encoding="utf-8"))
-
-docs = [
-    Document(
-        page_content=f"{game['title']}. {game['how_it_plays']}",
-        metadata={
-            "id": game["id"],
-            "title": game["title"],
-            "players_min": game["players_min"],
-            "players_max": game["players_max"],
-            "minutes": game["minutes"],
-            "weight": game["weight"],
-            "cooperative": game["cooperative"],
-            "on_shelf": game["on_shelf"],
-        },
-    )
-    for game in games
-]
-
-
-class GameStore(InMemoryVectorStore):
-    """Same store as vector_retriever.py. Cosine is already 0 to 1."""
-
-    def _select_relevance_score_fn(self):
-        return lambda score: score
-
-
-# The in-memory store takes a callable filter, not Chroma's dict. This visitor
-# turns the LLM's structured query into that callable.
-COMPARE = {
-    Comparator.EQ: eq,
-    Comparator.NE: ne,
-    Comparator.GT: gt,
-    Comparator.GTE: ge,
-    Comparator.LT: lt,
-    Comparator.LTE: le,
-}
-
-
-class MemoryTranslator(Visitor):
-    allowed_operators = [Operator.AND, Operator.OR]
-    allowed_comparators = list(COMPARE)
-
-    def visit_comparison(self, comparison: Comparison):
-        op = COMPARE[comparison.comparator]
-        attr, value = comparison.attribute, comparison.value
-
-        def check(doc: Document) -> bool:
-            return op(doc.metadata[attr], value)
-
-        return check
-
-    def visit_operation(self, operation: Operation):
-        checks = [arg.accept(self) for arg in operation.arguments]
-        if operation.operator is Operator.AND:
-            return lambda doc: all(fn(doc) for fn in checks)
-        return lambda doc: any(fn(doc) for fn in checks)
-
-    def visit_structured_query(self, structured_query: StructuredQuery):
-        if structured_query.filter is None:
-            return structured_query.query, {}
-        return structured_query.query, {
-            "filter": structured_query.filter.accept(self)
-        }
-
-
 store = GameStore.from_documents(
-    docs, OpenAIEmbeddings(model="text-embedding-3-small")
+    binder_docs(), OpenAIEmbeddings(model="text-embedding-3-small")
 )
 
 # Names and types the query constructor is allowed to filter on.

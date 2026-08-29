@@ -1,38 +1,17 @@
 """Embed small chunks, then hand back the parent binder page."""
 
-import json
-from pathlib import Path
-
 from dotenv import load_dotenv
 from langchain.retrievers import ParentDocumentRetriever
 from langchain.storage import InMemoryStore
-from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from binder import QUERY, binder_docs, load_games
+
 load_dotenv()  # OPENAI_API_KEY from .env
 
-# Same binder and question as vector_retriever.py. Only the retriever changes.
-QUERY = "a short calm game for two people after work"
-games = json.loads(Path("data/games.json").read_text(encoding="utf-8"))
-
-docs = [
-    Document(
-        page_content=f"{game['title']}. {game['how_it_plays']}",
-        metadata={
-            "id": game["id"],
-            "title": game["title"],
-            "players_min": game["players_min"],
-            "players_max": game["players_max"],
-            "minutes": game["minutes"],
-            "weight": game["weight"],
-            "cooperative": game["cooperative"],
-            "on_shelf": game["on_shelf"],
-        },
-    )
-    for game in games
-]
+docs = binder_docs()
 
 # Each sheet is two paragraphs, ~280 to 400 chars. 250 cuts on the blank line.
 child_splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=0)
@@ -48,7 +27,7 @@ retriever = ParentDocumentRetriever(
     search_kwargs={"k": 3},
 )
 # Keep the game id as the parent key so two child hits from one sheet collapse.
-retriever.add_documents(docs, ids=[game["id"] for game in games])
+retriever.add_documents(docs, ids=[game["id"] for game in load_games()])
 
 print(f"Query: {QUERY}")
 print(f"{len(docs)} parent sheets")
