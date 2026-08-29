@@ -2,5 +2,10 @@ langchain==0.3.27
 langchain-openai==0.3.34
 langchain-text-splitters==0.3.11
 lark==1.2.2
+llama-index==0.14.23
+llama-index-core==0.14.23
+llama-index-embeddings-openai==0.6.0
+llama-index-llms-openai==0.7.10
+llama-index-retrievers-bm25==0.7.1
 openai==2.54.0
 python-dotenv==1.2.3

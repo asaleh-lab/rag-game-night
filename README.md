@@ -36,3 +36,9 @@ python src/self_query.py
 ```powershell
 python src/parent_document.py
 ```
+
+## Same binder in LlamaIndex
+
+```powershell
+python src/llamaindex_retrievers.py
+```
