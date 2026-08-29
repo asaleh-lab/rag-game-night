@@ -24,3 +24,9 @@ python src/vector_retriever.py
 ```powershell
 python src/multi_query.py
 ```
+
+## Let's split the question into meaning and a filter
+
+```powershell
+python src/self_query.py
+```
