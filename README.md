@@ -18,3 +18,9 @@ Put your OpenAI API key in `.env`.
 ```powershell
 python src/vector_retriever.py
 ```
+
+## Let's rewrite the question and union the hits
+
+```powershell
+python src/multi_query.py
+```
