@@ -42,3 +42,9 @@ python src/parent_document.py
 ```powershell
 python src/llamaindex_retrievers.py
 ```
+
+## Let's search FAISS with no LLM
+
+```powershell
+python src/faiss_search.py
+```
