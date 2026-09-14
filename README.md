@@ -13,25 +13,25 @@ copy .env.example .env
 
 Put your OpenAI API key in `.env`.
 
-## Let's retrieve by similarity, then MMR, then a score threshold
+## Retrieve by similarity, then MMR, then a score threshold
 
 ```powershell
 python src/vector_retriever.py
 ```
 
-## Let's rewrite the question and union the hits
+## Rewrite the question and union the hits
 
 ```powershell
 python src/multi_query.py
 ```
 
-## Let's split the question into meaning and a filter
+## Split the question into meaning and a filter
 
 ```powershell
 python src/self_query.py
 ```
 
-## Let's embed small chunks and return the parent sheet
+## Embed small chunks and return the parent sheet
 
 ```powershell
 python src/parent_document.py
@@ -43,13 +43,13 @@ python src/parent_document.py
 python src/llamaindex_retrievers.py
 ```
 
-## Let's search FAISS with no LLM
+## Search FAISS with no LLM
 
 ```powershell
 python src/faiss_search.py
 ```
 
-## Let's keep the same embeddings in Chroma and FAISS
+## Keep the same embeddings in Chroma and FAISS
 
 ```powershell
 python src/chroma_and_faiss.py
